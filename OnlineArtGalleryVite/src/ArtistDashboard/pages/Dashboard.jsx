@@ -1,81 +1,75 @@
 import React, { useState, useEffect } from "react";
-import { 
-  LineChart, 
-  Line, 
-  XAxis, 
-  YAxis, 
-  CartesianGrid, 
-  Tooltip, 
-  ResponsiveContainer 
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
 } from "recharts";
-import { 
-  Users, 
-  Image, 
-  PaletteIcon, 
-  LayoutGrid 
-} from "lucide-react";
+import { Grid, Image, Users, Star, CheckCircle, Clock } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import config from './../../config';
+import config from "./../../config";
 
-const Dashboard = () => {
-  const [stats, setStats] = useState({
-    numberOfVisitors: 5,
-    numberOfArtworks: 10,
-    numberOfArtists: 15,
-    numberOfCurators: 12
+const CuratorDashboard = () => {
+  const [curatorStats, setCuratorStats] = useState({
+    pendingArtworks: 5,
+    approvedArtworks: 42,
+    rejectedArtworks: 3,
+    assignedExhibitions: 2,
   });
 
-  // Mock historical data for charts (in a real app, fetch from backend)
-  const [visitorTrend, setVisitorTrend] = useState([
-    { month: "Jan", visitors: 400 },
-    { month: "Feb", visitors: 300 },
-    { month: "Mar", visitors: 200 },
-    { month: "Apr", visitors: 278 },
-    { month: "May", visitors: 189 },
-    { month: "Jun", visitors: 239 }
+  // Mock data for artwork submission trends
+  const [artworkSubmissionTrend, setArtworkSubmissionTrend] = useState([
+    { month: "Jan", submissions: 20 },
+    { month: "Feb", submissions: 35 },
+    { month: "Mar", submissions: 25 },
+    { month: "Apr", submissions: 45 },
+    { month: "May", submissions: 38 },
+    { month: "Jun", submissions: 55 },
   ]);
 
-  const [artworkTrend, setArtworkTrend] = useState([
-    { month: "Jan", artworks: 50 },
-    { month: "Feb", artworks: 75 },
-    { month: "Mar", artworks: 60 },
-    { month: "Apr", artworks: 90 },
-    { month: "May", artworks: 70 },
-    { month: "Jun", artworks: 100 }
+  // Mock data for exhibition planning
+  const [exhibitionPlanningTrend, setExhibitionPlanningTrend] = useState([
+    { month: "Jan", exhibitions: 1 },
+    { month: "Feb", exhibitions: 1 },
+    { month: "Mar", exhibitions: 2 },
+    { month: "Apr", exhibitions: 2 },
+    { month: "May", exhibitions: 3 },
+    { month: "Jun", exhibitions: 2 },
   ]);
- useEffect(() => {
-   const fetchStats = async () => {
-     try {
-       // Retrieve token from local storage
-       const token = localStorage.getItem("token");
-       // Make the request with the token in the Authorization header
-       const response = await fetch(`${config.baseURL}/admin/stats`, {
-         method: "GET",
-         credentials:"include",
-         headers: {
-           "Content-Type": "application/json",
-           Authorization: `Bearer ${token}`, // Add the token
-         },
-       });
 
-       // Check if the response is successful
-       if (!response.ok) {
-         throw new Error(`HTTP error! Status: ${response.status}`);
-       }
+  useEffect(() => {
+    const fetchCuratorStats = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const response = await fetch(`${config.baseURL}/curator/dashboard`, {
+          method: "GET",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
 
-       const data = await response.json();
-       setStats(data);
-     } catch (error) {
-       console.error("Error fetching stats:", error);
-     }
-   };
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
 
-   fetchStats();
- }, []);
+        const data = await response.json();
+        setCuratorStats(data);
+      } catch (error) {
+        console.error("Error fetching curator stats:", error);
+      }
+    };
 
-  // Stat card component
-  const StatCard = ({ icon: Icon, title, value, color }) => (
+    fetchCuratorStats();
+  }, []);
+
+  // Curator Stat Card Component
+  const CuratorStatCard = ({ icon: Icon, title, value, color }) => (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <CardTitle className="text-sm font-medium">{title}</CardTitle>
@@ -90,49 +84,49 @@ const Dashboard = () => {
   return (
     <div className="space-y-6 p-6">
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <StatCard 
-          icon={Users} 
-          title="Total Visitors" 
-          value={stats.numberOfVisitors} 
-          color="text-blue-500" 
+        <CuratorStatCard
+          icon={Clock}
+          title="Pending Artworks"
+          value={curatorStats.pendingArtworks}
+          color="text-yellow-500"
         />
-        <StatCard 
-          icon={Image} 
-          title="Total Artworks" 
-          value={stats.numberOfArtworks} 
-          color="text-green-500" 
+        <CuratorStatCard
+          icon={CheckCircle}
+          title="Approved Artworks"
+          value={curatorStats.approvedArtworks}
+          color="text-green-500"
         />
-        <StatCard 
-          icon={PaletteIcon} 
-          title="Total Artists" 
-          value={stats.numberOfArtists} 
-          color="text-purple-500" 
+        <CuratorStatCard
+          icon={Image}
+          title="Rejected Artworks"
+          value={curatorStats.rejectedArtworks}
+          color="text-red-500"
         />
-        <StatCard 
-          icon={LayoutGrid} 
-          title="Total Curators" 
-          value={stats.numberOfCurators} 
-          color="text-orange-500" 
+        <CuratorStatCard
+          icon={Grid}
+          title="Assigned Exhibitions"
+          value={curatorStats.assignedExhibitions}
+          color="text-purple-500"
         />
       </div>
 
       <div className="grid gap-4 md:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle>Visitor Trends</CardTitle>
+            <CardTitle>Artwork Submission Trends</CardTitle>
           </CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={300}>
-              <LineChart data={visitorTrend}>
+              <LineChart data={artworkSubmissionTrend}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="month" />
                 <YAxis />
                 <Tooltip />
-                <Line 
-                  type="monotone" 
-                  dataKey="visitors" 
-                  stroke="#8884d8" 
-                  strokeWidth={2} 
+                <Line
+                  type="monotone"
+                  dataKey="submissions"
+                  stroke="#8884d8"
+                  strokeWidth={2}
                 />
               </LineChart>
             </ResponsiveContainer>
@@ -141,20 +135,20 @@ const Dashboard = () => {
 
         <Card>
           <CardHeader>
-            <CardTitle>Artwork Upload Trends</CardTitle>
+            <CardTitle>Exhibition Planning Trends</CardTitle>
           </CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={300}>
-              <LineChart data={artworkTrend}>
+              <LineChart data={exhibitionPlanningTrend}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="month" />
                 <YAxis />
                 <Tooltip />
-                <Line 
-                  type="monotone" 
-                  dataKey="artworks" 
-                  stroke="#82ca9d" 
-                  strokeWidth={2} 
+                <Line
+                  type="monotone"
+                  dataKey="exhibitions"
+                  stroke="#82ca9d"
+                  strokeWidth={2}
                 />
               </LineChart>
             </ResponsiveContainer>
@@ -165,4 +159,4 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard;
+export default CuratorDashboard;

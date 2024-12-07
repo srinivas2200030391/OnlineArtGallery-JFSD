@@ -1,4 +1,4 @@
-import ArtistDashboard from "./components/ArtistDashboard"; 
+import ArtistDashboard from "./ArtistDashboard/App"; 
 import CuratorDashboard from "./CuratorDashboard/App"; 
 import VisitorDashboard from "./VisitorDashboard/App"; 
 import Home from "./Home/index"; 

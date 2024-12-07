@@ -7,6 +7,9 @@ import Settings from "./pages/Settings";
 import ArtworkGallery from "./pages/ArtworkGallery";
 import AddArtwork from "./pages/AddArtWork";
 import ContactForm from "./pages/ContactForm";
+import VisitorFAQ from "./pages/VisitorFAQ ";
+import VisitorFeedbackForm from "./pages/VisitorFeedbackForm";
+import AboutPage from "./pages/AboutPage";
 
 const App = () => {
   return (
@@ -18,6 +21,9 @@ const App = () => {
         <Route path="/contact" element={<ContactForm />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/settings" element={<Settings />} />
+        <Route path="/FAQ" element={<VisitorFAQ />} />
+        <Route path="/Feedback" element={<VisitorFeedbackForm />} />
+        <Route path="/About" element={<AboutPage/>} />
       </Route>
     </Routes>
   );
