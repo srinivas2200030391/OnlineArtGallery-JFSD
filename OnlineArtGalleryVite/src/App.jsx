@@ -1,9 +1,9 @@
-import AdminDashboard from "./components/AdminDashboard"; 
 import ArtistDashboard from "./components/ArtistDashboard"; 
 import CuratorDashboard from "./components/CuratorDashboard"; 
 import VisitorDashboard from "./components/VisitorDashboard"; 
 import Home from "./Home/index"; 
 import { useEffect, useState } from "react"; 
+import Admin from './AdminDashboard/App';
  
 function App() { 
   const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false); 
@@ -44,26 +44,18 @@ function App() {
     setIsVisitorLoggedIn(true); 
   }; 
  
-  const handleLogout = () => { 
-    // Clear all login states and localStorage 
-    localStorage.clear(); 
-    setIsAdminLoggedIn(false); 
-    setIsArtistLoggedIn(false); 
-    setIsCuratorLoggedIn(false); 
-    setIsVisitorLoggedIn(false); 
-  }; 
  
   return ( 
     <div className="w-full h-screen"> 
       {(() => { 
         if (isAdminLoggedIn) { 
-          return <AdminDashboard onLogout={handleLogout} />; 
+          return <Admin/>; 
         } else if (isArtistLoggedIn) { 
-          return <ArtistDashboard onLogout={handleLogout} />; 
+          return <ArtistDashboard  />; 
         } else if (isCuratorLoggedIn) { 
-          return <CuratorDashboard onLogout={handleLogout} />; 
+          return <CuratorDashboard  />; 
         } else if (isVisitorLoggedIn) { 
-          return <VisitorDashboard onLogout={handleLogout} />; 
+          return <VisitorDashboard  />; 
         } else { 
           return ( 
             <Home 

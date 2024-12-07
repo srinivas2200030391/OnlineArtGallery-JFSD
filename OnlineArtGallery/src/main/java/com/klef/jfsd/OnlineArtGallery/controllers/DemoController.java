@@ -70,8 +70,20 @@ public class DemoController {
         String password = payload.get("password");
 
         try {
+            userService.createVisitor(username, password);
+            return ResponseEntity.ok("Visitor created successfully");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error creating admin: " + e.getMessage());
+        }
+    }
+    @PostMapping("/signup-admin")
+    public ResponseEntity<?> signUpAdmin(@RequestBody Map<String, String> payload) {
+        String username = payload.get("username");
+        String password = payload.get("password");
+
+        try {
             userService.createAdmin(username, password);
-            return ResponseEntity.ok("Admin created successfully");
+            return ResponseEntity.ok("Visitor created successfully");
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Error creating admin: " + e.getMessage());
         }

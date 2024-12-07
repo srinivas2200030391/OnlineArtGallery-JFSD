@@ -7,6 +7,9 @@ import AdminDashboard from "../components/AdminDashboard";
 import VisitorDashboard from "../components/VisitorDashboard";
 import CuratorDashboard from "../components/CuratorDashboard";
 import Home from "./Home";
+import Sidebar from "../SimilarComponents/SideNavBar";
+import TopNavbar from "../SimilarComponents/TopNavBar";
+import App from "../AdminDashboard/App";
 
 export default function index({
   onAdminLogin,
@@ -31,9 +34,11 @@ export default function index({
         />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/artistDashboard" element={<ArtistDashboard />} />
-        <Route path="/adminDashboard" element={<AdminDashboard />} />
+        <Route path="/adminDashboard" element={<AdminDashboard/>} />
         <Route path="/visitorDashboard" element={<VisitorDashboard />} />
         <Route path="/curatorDashboard" element={<CuratorDashboard />} />
+        <Route path="/sidenav" element={<Sidebar />} />
+        <Route path="/topnav" element={<TopNavbar/>} />
         <Route path="*" element={<h1>Not Found</h1>} />
       </Routes>
     </div>

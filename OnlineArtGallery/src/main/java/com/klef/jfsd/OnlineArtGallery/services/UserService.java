@@ -98,4 +98,12 @@ public class UserService implements UserDetailsService {
 
         adminRepo.save(admin);
     }
+
+    public void createVisitor(String username, String password) {
+        Visitor visitor = new Visitor();
+        visitor.setName(username);
+        visitor.setPassword(new BCryptPasswordEncoder(5).encode(password));
+
+        visitorRepo.save(visitor);
+    }
 }

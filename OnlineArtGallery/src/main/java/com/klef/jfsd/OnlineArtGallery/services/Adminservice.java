@@ -2,9 +2,15 @@ package com.klef.jfsd.OnlineArtGallery.services;
 
 import com.klef.jfsd.OnlineArtGallery.models.Admin;
 import com.klef.jfsd.OnlineArtGallery.models.ArtWork;
+import com.klef.jfsd.OnlineArtGallery.models.Artist;
+import com.klef.jfsd.OnlineArtGallery.models.Curator;
 import com.klef.jfsd.OnlineArtGallery.repositories.AdminRepo;
 import com.klef.jfsd.OnlineArtGallery.repositories.ArtWorkRepo;
+import com.klef.jfsd.OnlineArtGallery.repositories.ArtistRepo;
+import com.klef.jfsd.OnlineArtGallery.repositories.CuratorRepo;
+import com.klef.jfsd.OnlineArtGallery.repositories.VisitorRepo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,41 +19,55 @@ import java.util.List;
 public class Adminservice {
 
     @Autowired
-    AdminRepo repo;
-    ArtWorkRepo artrepo;
-    // Method to manage artworks
-    public void manageArtworks() {
-        // Implementation for managing artworks
-        System.out.println("Managing artworks...");
+    private AdminRepo adminRepo;
+    @Autowired
+    private ArtWorkRepo artWorkRepo;
+    @Autowired
+    private ArtistRepo artistRepo;
+    @Autowired
+    private CuratorRepo curatorRepo;
+    @Autowired
+    private VisitorRepo visitorRepo;
+
+    // Method to add an artist
+    public void addArtist(Artist artist) {
+        artist.setPassword(new BCryptPasswordEncoder(5).encode(artist.getPassword()));
+        artistRepo.save(artist);
     }
 
-    // Method to manage users
-    public void manageUsers() {
-        // Implementation for managing users
-        System.out.println("Managing users...");
+    // Method to add an artwork
+    public void addArt(ArtWork artWork) {
+        artWorkRepo.save(artWork);
     }
 
-    // Method to view reports
-    public void viewReports() {
-        // Implementation for viewing reports
-        System.out.println("Viewing reports...");
+    // Method to remove an artwork
+    public void removeArt(Integer id) {
+        artWorkRepo.deleteById(id);
     }
 
-    // Example method to get all admins
-    public List<Admin> getAllAdmins() {
-       return repo.findAll();
+    // Method to add a curator
+    public void addCurator(Curator curator) {
+        curator.setPassword(new BCryptPasswordEncoder(5).encode(curator.getPassword()));
+        curatorRepo.save(curator);
     }
 
-    // Example method to add a new admin
-    public void addAdmin(Admin admin) {
-       repo.save(admin);
+    // Method to get the number of visitors
+    public int getNumberOfVisitors() {
+        return (int) visitorRepo.count();
     }
 
-    // Example method to delete an admin by ID
-    public void deleteAdmin(Integer id) {
-       repo.deleteById(id);
+    // Method to get the number of artworks
+    public int getNumberOfArtworks() {
+        return (int) artWorkRepo.count();
     }
-    public void addArt(ArtWork art) {
-        artrepo.save(art);
+
+    // Method to get the number of artists
+    public int getNumberOfArtists() {
+        return (int) artistRepo.count();
+    }
+
+    // Method to get the number of curators
+    public int getNumberOfCurators() {
+        return (int) curatorRepo.count();
     }
 }

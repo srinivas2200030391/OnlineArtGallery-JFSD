@@ -35,7 +35,10 @@ export default function SignIn({
       if (response) {
         console.log(response.data);
         const loc = "/" + response.data.user.role.toLowerCase() + "Dashboard";
-        loginFunctions[response.data.user.role.toLowerCase]();
+        loginFunctions[response.data.user.role.toLowerCase()]();
+        localStorage.setItem("token", response.data.token);
+        localStorage.setItem("user", JSON.stringify(response.data.user));
+
         navigate(loc);
       } else {
         setMessage("Sign In Failed");
@@ -52,7 +55,6 @@ export default function SignIn({
       { opacity: 1, x: 0, duration: 1, ease: "power2.inOut" }
     );
     console.log("Sign In Page");
-    
   }, []);
   useEffect(() => {
     gsap.fromTo(
@@ -91,7 +93,6 @@ export default function SignIn({
 
   return (
     <div className="signinpage bg-[#eee8e8] h-screen">
-      
       <div
         className="image hidden md:block w-[31%] mt-[30pt]"
         onMouseMove={handleMouseMove}

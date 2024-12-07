@@ -33,12 +33,19 @@ public class JwtService {
     }
 
     public String generateToken(Map<String, Object> extraClaims, UserDetails userDetails) {
+        Date issuedAt = new Date(System.currentTimeMillis());
+        Date expiration = new Date(System.currentTimeMillis() + 1000 * 60 * 60); // 1 hour
+
+        // Optional: Add logging
+        System.out.println("Token issued at: " + issuedAt);
+        System.out.println("Token expires at: " + expiration);
+
         return Jwts
                 .builder()
                 .setClaims(extraClaims)
                 .setSubject(userDetails.getUsername())
-                .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 24))
+                .setIssuedAt(issuedAt)
+                .setExpiration(expiration)
                 .signWith(getSignInKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
@@ -60,11 +67,11 @@ public class JwtService {
         return Jwts
                 .parserBuilder()
                 .setSigningKey(getSignInKey())
+                .setAllowedClockSkewSeconds(30) // Allow 30 seconds of clock skew
                 .build()
                 .parseClaimsJws(token)
                 .getBody();
     }
-
     private Key getSignInKey() {
         byte[] keyBytes = java.util.Base64.getDecoder().decode(SECRET_KEY);
         return Keys.hmacShaKeyFor(keyBytes);
