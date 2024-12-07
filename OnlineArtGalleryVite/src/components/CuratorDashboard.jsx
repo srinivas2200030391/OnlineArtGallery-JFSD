@@ -2,6 +2,8 @@ import React from 'react'
 
 export default function CuratorDashboard() {
   return (
-    <div>curatorDashboard</div>
+    <div>
+      <h3>Curator</h3>
+    </div>
   )
 }

@@ -32,13 +32,12 @@ export default function SignIn({
     console.log(formData);
     try {
       const response = await axios.post(`${config.baseURL}/signin`, formData);
-      if (response) {
+      if (response.status === 200) {
         console.log(response.data);
         const loc = "/" + response.data.user.role.toLowerCase() + "Dashboard";
         loginFunctions[response.data.user.role.toLowerCase()]();
         localStorage.setItem("token", response.data.token);
         localStorage.setItem("user", JSON.stringify(response.data.user));
-
         navigate(loc);
       } else {
         setMessage("Sign In Failed");

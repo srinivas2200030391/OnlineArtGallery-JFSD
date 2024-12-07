@@ -22,8 +22,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
-import { useToast } from "@/hooks/use-toast";
-
+import { toast } from "@/components/ui/use-toast";
 import config from "@/config";
 
 const ManageArtists = () => {
@@ -39,7 +38,7 @@ const ManageArtists = () => {
     password: "",
     bio: "",
   });
-  const { toast } = useToast();
+
   // Fetch artists from API
   const fetchArtists = async () => {
     try {
@@ -220,7 +219,8 @@ const ManageArtists = () => {
                 bio: "",
               });
               setIsAddModalOpen(true);
-            }}>
+            }}
+          >
             <UserPlus className="mr-2 h-4 w-4" /> Add New Artist
           </Button>
         </CardHeader>
@@ -248,19 +248,22 @@ const ManageArtists = () => {
                       <Button
                         size="icon"
                         variant="outline"
-                        onClick={() => viewArtistDetails(artist)}>
+                        onClick={() => viewArtistDetails(artist)}
+                      >
                         <Eye className="h-4 w-4" />
                       </Button>
                       <Button
                         size="icon"
                         variant="outline"
-                        onClick={() => prepareUpdateArtist(artist)}>
+                        onClick={() => prepareUpdateArtist(artist)}
+                      >
                         <Edit2 className="h-4 w-4" />
                       </Button>
                       <Button
                         size="icon"
                         variant="destructive"
-                        onClick={() => prepareDeleteArtist(artist)}>
+                        onClick={() => prepareDeleteArtist(artist)}
+                      >
                         <Trash2 className="h-4 w-4" />
                       </Button>
                     </div>
@@ -427,12 +430,11 @@ const ManageArtists = () => {
               <div className="flex justify-end space-x-2">
                 <Button
                   variant="outline"
-                  onClick={() => setIsDeleteModalOpen(false)}>
+                  onClick={() => setIsDeleteModalOpen(false)}
+                >
                   Cancel
                 </Button>
-                <Button
-                  variant="destructive"
-                  onClick={handleConfirmDeleteArtist}>
+                <Button variant="destructive" onClick={handleConfirmDeleteArtist}>
                   Delete
                 </Button>
               </div>

@@ -1,155 +1,201 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { gsap } from "gsap";
+import { ChevronRight, ChevronLeft, Menu, LogOut } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const menuItemsByRole = {
   admin: [
-    { label: "Dashboard", icon: "🏠", path: "/dashboard" },
-    { label: "Manage Users", icon: "👥", path: "/manage-users" },
-    { label: "Settings", icon: "⚙️", path: "/settings" },
-    { label: "Reports", icon: "📊", path: "/reports" },
-    { label: "Logs", icon: "📝", path: "/logs" },
-    { label: "Notifications", icon: "🔔", path: "/notifications" },
-    { label: "Help", icon: "❓", path: "/help" },
+    { label: "Dashboard", icon: "dashboard", path: "/dashboard" },
+    { label: "Manage Users", icon: "users", path: "/manage-users" },
+    { label: "Settings", icon: "settings", path: "/settings" },
+    { label: "Reports", icon: "bar-chart", path: "/reports" },
+    { label: "Logs", icon: "file-text", path: "/logs" },
+    { label: "Notifications", icon: "bell", path: "/notifications" },
+    { label: "Help", icon: "help-circle", path: "/help" },
   ],
   artist: [
-    { label: "Portfolio", icon: "🎨", path: "/portfolio" },
-    { label: "Upload Art", icon: "⬆️", path: "/upload" },
-    { label: "Gallery", icon: "🖼️", path: "/gallery" },
-    { label: "Commissions", icon: "💰", path: "/commissions" },
-    { label: "Analytics", icon: "📈", path: "/analytics" },
-    { label: "Messages", icon: "✉️", path: "/messages" },
-    { label: "Support", icon: "🛠️", path: "/support" },
+    { label: "Portfolio", icon: "palette", path: "/portfolio" },
+    { label: "Upload Art", icon: "upload", path: "/upload" },
+    { label: "Gallery", icon: "image", path: "/gallery" },
+    { label: "Commissions", icon: "wallet", path: "/commissions" },
+    { label: "Analytics", icon: "trending-up", path: "/analytics" },
+    { label: "Messages", icon: "mail", path: "/messages" },
+    { label: "Support", icon: "tool", path: "/support" },
   ],
   visitor: [
-    { label: "Home", icon: "🏠", path: "/home" },
-    { label: "Explore", icon: "🔍", path: "/explore" },
-    { label: "Contact Us", icon: "📞", path: "/contact" },
-    { label: "FAQ", icon: "❓", path: "/faq" },
-    { label: "Feedback", icon: "💬", path: "/feedback" },
-    { label: "Subscribe", icon: "📬", path: "/subscribe" },
-    { label: "About Us", icon: "ℹ️", path: "/about" },
+    { label: "Home", icon: "home", path: "/" },
+    { label: "Explore", icon: "search", path: "/explore" },
+    { label: "Contact", icon: "phone", path: "/contact" },
+    { label: "FAQ", icon: "help-circle", path: "/faq" },
+    { label: "Feedback", icon: "message-circle", path: "/feedback" },
+    { label: "Subscribe", icon: "mail", path: "/subscribe" },
+    { label: "About", icon: "info", path: "/about" },
   ],
   curator: [
-    { label: "Curate Art", icon: "📑", path: "/curate" },
-    { label: "Collections", icon: "🗂️", path: "/collections" },
-    { label: "Feedback", icon: "💬", path: "/feedback" },
-    { label: "Submissions", icon: "📤", path: "/submissions" },
-    { label: "Events", icon: "📅", path: "/events" },
-    { label: "Collaborations", icon: "🤝", path: "/collaborations" },
-    { label: "Profile", icon: "👤", path: "/profile" },
+    { label: "Curate Art", icon: "clipboard", path: "/curate" },
+    { label: "Collections", icon: "folder", path: "/collections" },
+    { label: "Feedback", icon: "message-circle", path: "/feedback" },
+    { label: "Submissions", icon: "send", path: "/submissions" },
+    { label: "Events", icon: "calendar", path: "/events" },
+    { label: "Collaborations", icon: "users", path: "/collaborations" },
+    { label: "Profile", icon: "user", path: "/profile" },
   ],
 };
 
 const Sidebar = () => {
-  const [role, setRole] = useState(null);
-  const [isSidebarVisible, setSidebarVisible] = useState(true);
-  const menuRef = useRef(null);
-  const sidebarRef = useRef(null);
+  const [role, setRole] = useState("admin");
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Get role from localStorage
-    const storedRole = localStorage.getItem("role");
-    setRole(storedRole || "admin");
+    const storedRole = localStorage.getItem("user");
+    const jsonParse = JSON.parse(storedRole);
+    console.log(jsonParse.role);
+    
+    setRole(jsonParse.role.toLowerCase()|| "admin");
   }, []);
 
-  useEffect(() => {
-    if (menuRef.current) {
-      gsap.fromTo(
-        menuRef.current.children,
-        { opacity: 0, scale: 0, x: -20 },
-        {
-          opacity: 1,
-          scale: 1,
-          x: 0,
-          stagger: 0.3,
-          duration: 2,
-          ease: "elastic.out(1, 0.5)",
-        }
-      );
-    }
-  });
+  const handleNavigate = (path) => {
+    navigate(path);
+  };
 
-  const handleToggleSidebar = () => {
-    if (isSidebarVisible) {
-      gsap.to(sidebarRef.current, {
-        x: "-100%",
-        duration: 0.5,
-        ease: "power2.out",
-        onComplete: () => setSidebarVisible(false),
-      });
-    } else {
-      setSidebarVisible(true);
-      gsap.fromTo(
-        sidebarRef.current,
-        { x: "-100%" },
-        { x: "0%", duration: 0.5, ease: "power2.out" }
-      );
-    }
+  const toggleSidebar = () => {
+    setIsSidebarCollapsed(!isSidebarCollapsed);
+  };
+
+  const renderIcon = (iconName) => {
+    const IconComponent = Icons[iconName];
+    return IconComponent ? <IconComponent className="w-5 h-5" /> : null;
   };
 
   const menuItems = menuItemsByRole[role] || [];
 
   return (
-    <div className="flex h-screen bg-gray-100">
-      {/* Sidebar */}
-      <nav
-        ref={sidebarRef}
-        className={`absolute z-10 w-72 h-full bg-gradient-to-br bg-blue-50 text-gray-200 flex flex-col justify-between transition-transform duration-300 ease-in-out ${
-          isSidebarVisible ? "translate-x-0" : "-translate-x-full"
-        }`}>
-        {/* Logo */}
-        <div className="px-6 py-8 text-center">
-          <h1 className="text-3xl font-extrabold text-white tracking-wide">
-            My<span className="text-indigo-500"> Profile</span>
-          </h1>
-        </div>
+    <div
+      className={`
+      fixed left-0 top-0 h-full 
+      bg-white shadow-lg 
+      transition-all duration-300 
+      ${isSidebarCollapsed ? "w-20" : "w-64"}
+    `}>
+      {/* Sidebar Toggle */}
+      <button
+        onClick={toggleSidebar}
+        className="absolute top-4 -right-4 z-50 
+        bg-blue-500 text-white p-2 rounded-full 
+        shadow-lg hover:bg-blue-600 transition">
+        {isSidebarCollapsed ? <ChevronRight /> : <ChevronLeft />}
+      </button>
 
-        {/* Menu */}
-        <ul ref={menuRef} className="flex-1 space-y-4 px-6">
-          {menuItems
-            .slice(0, Math.ceil(menuItems.length / 2))
-            .map((item, index) => (
-              <li
-                key={index}
-                className="flex items-center space-x-4 p-3 rounded-lg bg-black hover:bg-indigo-600 transition-all cursor-pointer shadow-lg"
-                onClick={() => navigate(item.path)}>
-                <span className="text-2xl">{item.icon}</span>
-                <span className="text-lg font-semibold">{item.label}</span>
-              </li>
-            ))}
+      {/* User Dropdown */}
+      <div className="p-4 border-b">
+        <DropdownMenu>
+          <DropdownMenuTrigger className="flex items-center w-full">
+            <img
+              src="/img/about.jpg"
+              alt="User"
+              className="w-10 h-10 rounded-full mr-3"
+            />
+            {!isSidebarCollapsed && (
+              <div className="flex flex-col">
+                <span className="font-semibold text-sm">John Doe</span>
+                <span className="text-xs text-gray-500 capitalize">Admin</span>
+              </div>
+            )}
+          </DropdownMenuTrigger>
+          <DropdownMenuContent>
+            <DropdownMenuLabel>My Account</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem
+              onClick={() => handleNavigate("/profile")}
+              className="cursor-pointer">
+              Profile
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => handleNavigate("/settings")}
+              className="cursor-pointer">
+              Settings
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem
+              onClick={() => {
+                localStorage.clear();
+                handleNavigate("/");
+              }}
+              className="text-red-500 cursor-pointer">
+              <LogOut className="mr-2 h-4 w-4" />
+              Logout
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
 
-          {/* Divider */}
-          <div className="border-t border-gray-600 my-4"></div>
-
-          {menuItems
-            .slice(Math.ceil(menuItems.length / 2))
-            .map((item, index) => (
-              <li
-                key={index}
-                className="flex items-center space-x-4 p-3 rounded-lg bg-gray-700 hover:bg-indigo-600 transition-all cursor-pointer shadow-lg"
-                onClick={() => navigate(item.path)}>
-                <span className="text-2xl">{item.icon}</span>
-                <span className="text-lg font-semibold">{item.label}</span>
-              </li>
-            ))}
+      {/* Menu Items */}
+      <nav className="mt-4 overflow-y-auto h-[calc(100%-150px)]">
+        <ul>
+          {menuItems.map((item, index) => (
+            <li
+              key={index}
+              onClick={() => handleNavigate(item.path)}
+              className={`
+                flex items-center p-3 
+                hover:bg-blue-50 cursor-pointer 
+                ${isSidebarCollapsed ? "justify-center" : "px-4"}
+              `}>
+              <div className="flex items-center">
+                {renderIcon(item.icon)}
+                {!isSidebarCollapsed && (
+                  <span className="ml-3 text-sm">{item.label}</span>
+                )}
+              </div>
+            </li>
+          ))}
         </ul>
-
-        {/* Footer */}
-        <div className="px-6 py-6 bg-blue-75 text-center">
-          <p className="text-sm text-gray-400">&copy; 2024 IG Theatre</p>
-        </div>
       </nav>
 
-      {/* Toggle Button */}
-      <button
-        onClick={handleToggleSidebar}
-        className="fixed top-5 left-5 z-20 p-2 bg-blue-600 text-white rounded-full shadow-lg hover:bg-blue-700">
-        {isSidebarVisible ? "<<" : ">>"}
-      </button>
+      {/* Footer */}
+      {!isSidebarCollapsed && (
+        <div className="absolute bottom-0 left-0 right-0 p-4 text-center text-xs text-gray-500">
+          © 2024 IG Theatre
+        </div>
+      )}
     </div>
   );
+};
+
+// Simulated Icons import (replace with actual import from lucide-react or your icon library)
+const Icons = {
+  dashboard: Menu,
+  users: Menu,
+  settings: Menu,
+  "bar-chart": Menu,
+  "file-text": Menu,
+  bell: Menu,
+  "help-circle": Menu,
+  palette: Menu,
+  upload: Menu,
+  image: Menu,
+  wallet: Menu,
+  "trending-up": Menu,
+  mail: Menu,
+  tool: Menu,
+  home: Menu,
+  search: Menu,
+  phone: Menu,
+  "message-circle": Menu,
+  clipboard: Menu,
+  folder: Menu,
+  send: Menu,
+  calendar: Menu,
+  user: Menu,
+  info: Menu,
 };
 
 export default Sidebar;

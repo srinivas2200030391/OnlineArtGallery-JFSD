@@ -9,7 +9,7 @@ import CuratorDashboard from "../components/CuratorDashboard";
 import Home from "./Home";
 import Sidebar from "../SimilarComponents/SideNavBar";
 import TopNavbar from "../SimilarComponents/TopNavBar";
-import App from "../AdminDashboard/App";
+import Curatorapp from "../CuratorDashboard/App";
 
 export default function index({
   onAdminLogin,
@@ -36,7 +36,7 @@ export default function index({
         <Route path="/artistDashboard" element={<ArtistDashboard />} />
         <Route path="/adminDashboard" element={<AdminDashboard/>} />
         <Route path="/visitorDashboard" element={<VisitorDashboard />} />
-        <Route path="/curatorDashboard" element={<CuratorDashboard />} />
+        <Route path="/curatorDashboard" element={<Curatorapp />} />
         <Route path="/sidenav" element={<Sidebar />} />
         <Route path="/topnav" element={<TopNavbar/>} />
         <Route path="*" element={<h1>Not Found</h1>} />

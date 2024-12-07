@@ -1,7 +1,9 @@
 package com.klef.jfsd.OnlineArtGallery.services;
 
 import com.klef.jfsd.OnlineArtGallery.models.ArtWork;
+import com.klef.jfsd.OnlineArtGallery.models.Visitor;
 import com.klef.jfsd.OnlineArtGallery.repositories.ArtWorkRepo;
+import com.klef.jfsd.OnlineArtGallery.repositories.VisitorRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,6 +14,8 @@ public class CuratorService {
 
     @Autowired
     private ArtWorkRepo artWorkRepo;
+    @Autowired
+    private VisitorRepo visitorRepo;
 
     // Method to review an artwork
     public void reviewArtwork(Integer artworkId, String review) {
@@ -34,5 +38,11 @@ public class CuratorService {
     // Method to get all artworks
     public List<ArtWork> getAllArtworks() {
         return artWorkRepo.findAll();
+    }
+    // Method to add a visitor
+    public void addVisitor(Visitor visitor) {
+        visitorRepo.save(visitor);
+    }    public void addArtWork(ArtWork artWork) {
+        artWorkRepo.save(artWork);
     }
 }

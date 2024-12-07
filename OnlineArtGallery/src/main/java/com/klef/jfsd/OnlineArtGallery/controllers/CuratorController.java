@@ -1,6 +1,7 @@
 package com.klef.jfsd.OnlineArtGallery.controllers;
 
 import com.klef.jfsd.OnlineArtGallery.models.ArtWork;
+import com.klef.jfsd.OnlineArtGallery.models.Visitor;
 import com.klef.jfsd.OnlineArtGallery.services.CuratorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -31,5 +32,15 @@ public class CuratorController {
     @GetMapping("/artworks")
     public List<ArtWork> getAllArtworks() {
         return curatorService.getAllArtworks();
+    }
+    // Endpoint to add a visitor
+    @PostMapping("/visitors")
+    public void addVisitor(@RequestBody Visitor visitor) {
+        curatorService.addVisitor(visitor);
+    }
+
+    @PostMapping("/arts")
+    public void addArt(@RequestBody ArtWork artwork){
+        curatorService.addArtWork(artwork);
     }
 }

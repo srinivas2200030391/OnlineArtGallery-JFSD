@@ -29,4 +29,5 @@ public class VisitorService {
         // This is a placeholder implementation
         return List.of("Exhibition 1", "Exhibition 2", "Exhibition 3");
     }
+
 }

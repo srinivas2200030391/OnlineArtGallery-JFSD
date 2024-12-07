@@ -1,6 +1,6 @@
 import ArtistDashboard from "./components/ArtistDashboard"; 
-import CuratorDashboard from "./components/CuratorDashboard"; 
-import VisitorDashboard from "./components/VisitorDashboard"; 
+import CuratorDashboard from "./CuratorDashboard/App"; 
+import VisitorDashboard from "./VisitorDashboard/App"; 
 import Home from "./Home/index"; 
 import { useEffect, useState } from "react"; 
 import Admin from './AdminDashboard/App';
