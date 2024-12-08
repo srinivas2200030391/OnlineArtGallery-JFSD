@@ -5,7 +5,6 @@ import Dashboard from "./pages/Dashboard";
 import Profile from "./pages/Profile";
 import Settings from "./pages/Settings";
 import ArtworkGallery from "./pages/ArtworkGallery";
-import AddArtwork from "./pages/AddArtWork";
 import ContactForm from "./pages/ContactForm";
 import VisitorFAQ from "./pages/VisitorFAQ ";
 import VisitorFeedbackForm from "./pages/VisitorFeedbackForm";

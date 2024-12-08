@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import axios from "axios";
 import {
   Card,
   CardContent,
@@ -7,8 +8,23 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Grid, PlusCircle, DollarSign, Heart } from "lucide-react";
+import config from "./../../config";
+import {
+  Grid,
+  PlusCircle,
+  DollarSign,
+  Heart,
+  ShoppingCart,
+} from "lucide-react";
 
 const artworkData = [
   {
@@ -72,9 +88,9 @@ const artworkData = [
       "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQpPWT1ysfIfNdLExVt4Koos-pcynWbNfnQTQ&s",
   },
 ];
-
 const ArtworkGallery = () => {
   const [favorites, setFavorites] = useState([]);
+  const [selectedArtwork, setSelectedArtwork] = useState(null);
 
   const toggleFavorite = (artworkId) => {
     setFavorites((prev) =>
@@ -82,6 +98,51 @@ const ArtworkGallery = () => {
         ? prev.filter((id) => id !== artworkId)
         : [...prev, artworkId]
     );
+  };
+
+  const handleViewDetails = (artwork) => {
+    setSelectedArtwork(artwork);
+  };
+
+  const handleBuyNow = async () => {
+    if (!selectedArtwork) return;
+
+    try {
+      // Get token from local storage
+      const token = localStorage.getItem("token");
+
+      if (!token) {
+        alert("Please log in first");
+        return;
+      }
+      console.log(selectedArtwork);
+
+      // Prepare checkout request
+      const response = await axios.post(
+        `${config.baseURL}/product/v1/checkout`,
+        {
+          amount: selectedArtwork.price,
+          quantity: 1,
+          currency: "USD",
+          name: selectedArtwork.title,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      // Redirect to the session URL
+      if (response.status == 200) {
+        window.location.href = response.data.sessionUrl;
+      } else {
+        alert("Unable to process checkout");
+      }
+    } catch (error) {
+      console.error("Checkout error:", error);
+      alert("Failed to initiate checkout. Please try again.");
+    }
   };
 
   return (
@@ -133,11 +194,45 @@ const ArtworkGallery = () => {
                 <DollarSign className="h-4 w-4 mr-1" />
                 <span className="font-bold">{artwork.price.toFixed(2)}</span>
               </div>
-              <div>
-                <Button variant="outline" size="sm">
-                  View Details
-                </Button>
-              </div>
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handleViewDetails(artwork)}>
+                    View Details
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-[625px]">
+                  <DialogHeader>
+                    <DialogTitle>{artwork.title}</DialogTitle>
+                    <DialogDescription>{artwork.description}</DialogDescription>
+                  </DialogHeader>
+                  <div className="grid gap-4 py-4">
+                    <div className="grid grid-cols-2 gap-4">
+                      <img
+                        src={artwork.imageUrl}
+                        alt={artwork.title}
+                        className="w-full h-[300px] object-cover rounded-lg"
+                      />
+                      <div>
+                        <p className="text-sm font-medium mb-2">
+                          Artist: {artwork.artist}
+                        </p>
+                        <div className="flex items-center text-green-600 mb-4">
+                          <DollarSign className="h-5 w-5 mr-1" />
+                          <span className="text-xl font-bold">
+                            {artwork.price.toFixed(2)}
+                          </span>
+                        </div>
+                        <Button onClick={handleBuyNow} className="w-full">
+                          <ShoppingCart className="mr-2 h-4 w-4" /> Buy Now
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                </DialogContent>
+              </Dialog>
             </CardFooter>
           </Card>
         ))}
