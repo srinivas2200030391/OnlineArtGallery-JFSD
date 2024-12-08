@@ -10,16 +10,19 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import axios from "axios";
+import config from "./../../config";
 
 const ContactForm = () => {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
-    phone: "",
+    subject: "",
     message: "",
   });
 
   const [errors, setErrors] = useState({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -42,8 +45,8 @@ const ContactForm = () => {
       newErrors.email = "Email is invalid";
     }
 
-    if (formData.phone && !/^\d{10}$/.test(formData.phone)) {
-      newErrors.phone = "Phone number must be 10 digits";
+    if (!formData.subject.trim()) {
+      newErrors.subject = "Subject is required";
     }
 
     if (!formData.message.trim()) {
@@ -54,13 +57,30 @@ const ContactForm = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!validateForm()) return;
 
-    if (validateForm()) {
-      // Here you would typically send the form data to a backend
-      console.log("Form submitted:", formData);
+    setIsSubmitting(true);
+
+    try {
+      const token = localStorage.getItem("token");
+      const response = await axios.post(`${config.baseURL}/visitors/sendemail`, formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
       alert("Form submitted successfully!");
+      setFormData({ name: "", email: "", subject: "", message: "" });
+      setErrors({});
+    } catch (error) {
+      alert(
+        error.response?.data?.message ||
+          "Failed to submit form. Please try again."
+      );
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -82,10 +102,14 @@ const ContactForm = () => {
               value={formData.name}
               onChange={handleChange}
               placeholder="Your Name"
+              aria-invalid={!!errors.name}
+              aria-describedby="name-error"
               className={errors.name ? "border-red-500" : ""}
             />
             {errors.name && (
-              <p className="text-red-500 text-sm">{errors.name}</p>
+              <p id="name-error" className="text-red-500 text-sm">
+                {errors.name}
+              </p>
             )}
           </div>
 
@@ -98,25 +122,33 @@ const ContactForm = () => {
               value={formData.email}
               onChange={handleChange}
               placeholder="you@example.com"
+              aria-invalid={!!errors.email}
+              aria-describedby="email-error"
               className={errors.email ? "border-red-500" : ""}
             />
             {errors.email && (
-              <p className="text-red-500 text-sm">{errors.email}</p>
+              <p id="email-error" className="text-red-500 text-sm">
+                {errors.email}
+              </p>
             )}
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="phone">Phone (Optional)</Label>
+            <Label htmlFor="subject">Subject</Label>
             <Input
-              id="phone"
-              name="phone"
-              value={formData.phone}
+              id="subject"
+              name="subject"
+              value={formData.subject}
               onChange={handleChange}
-              placeholder="1234567890"
-              className={errors.phone ? "border-red-500" : ""}
+              placeholder="Topic of your message"
+              aria-invalid={!!errors.subject}
+              aria-describedby="subject-error"
+              className={errors.subject ? "border-red-500" : ""}
             />
-            {errors.phone && (
-              <p className="text-red-500 text-sm">{errors.phone}</p>
+            {errors.subject && (
+              <p id="subject-error" className="text-red-500 text-sm">
+                {errors.subject}
+              </p>
             )}
           </div>
 
@@ -131,14 +163,18 @@ const ContactForm = () => {
               className={`${
                 errors.message ? "border-red-500" : ""
               } min-h-[100px]`}
+              aria-invalid={!!errors.message}
+              aria-describedby="message-error"
             />
             {errors.message && (
-              <p className="text-red-500 text-sm">{errors.message}</p>
+              <p id="message-error" className="text-red-500 text-sm">
+                {errors.message}
+              </p>
             )}
           </div>
 
-          <Button type="submit" className="w-full">
-            Send Message
+          <Button type="submit" className="w-full" disabled={isSubmitting}>
+            {isSubmitting ? "Sending..." : "Send Message"}
           </Button>
         </form>
       </CardContent>

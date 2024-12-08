@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import {
   Card,
@@ -24,6 +24,7 @@ import {
   DollarSign,
   Heart,
   ShoppingCart,
+  Trash2,
 } from "lucide-react";
 
 const artworkData = [
@@ -92,12 +93,32 @@ const ArtworkGallery = () => {
   const [favorites, setFavorites] = useState([]);
   const [selectedArtwork, setSelectedArtwork] = useState(null);
 
-  const toggleFavorite = (artworkId) => {
-    setFavorites((prev) =>
-      prev.includes(artworkId)
-        ? prev.filter((id) => id !== artworkId)
-        : [...prev, artworkId]
+  useEffect(() => {
+    // Load favorites from local storage on component mount
+    const storedFavorites = JSON.parse(
+      localStorage.getItem("likedArtworks") || "[]"
     );
+    setFavorites(storedFavorites.map((artwork) => artwork.id));
+  }, []);
+
+  const toggleFavorite = (artwork) => {
+    const storedFavorites = JSON.parse(
+      localStorage.getItem("likedArtworks") || "[]"
+    );
+
+    if (storedFavorites.some((item) => item.id === artwork.id)) {
+      // Remove from favorites
+      const updatedFavorites = storedFavorites.filter(
+        (item) => item.id !== artwork.id
+      );
+      localStorage.setItem("likedArtworks", JSON.stringify(updatedFavorites));
+      setFavorites(updatedFavorites.map((item) => item.id));
+    } else {
+      // Add to favorites
+      const updatedFavorites = [...storedFavorites, artwork];
+      localStorage.setItem("likedArtworks", JSON.stringify(updatedFavorites));
+      setFavorites(updatedFavorites.map((item) => item.id));
+    }
   };
 
   const handleViewDetails = (artwork) => {
@@ -168,7 +189,7 @@ const ArtworkGallery = () => {
                 variant="ghost"
                 size="icon"
                 className="absolute top-2 right-2"
-                onClick={() => toggleFavorite(artwork.id)}>
+                onClick={() => toggleFavorite(artwork)}>
                 <Heart
                   className={`h-6 w-6 ${
                     favorites.includes(artwork.id)
@@ -237,6 +258,80 @@ const ArtworkGallery = () => {
           </Card>
         ))}
       </div>
+    </div>
+  );
+};
+
+export const Subscriptions = () => {
+  const [likedArtworks, setLikedArtworks] = useState([]);
+
+  useEffect(() => {
+    // Fetch liked artworks from local storage
+    const storedLikedArtworks = JSON.parse(
+      localStorage.getItem("likedArtworks") || "[]"
+    );
+    setLikedArtworks(storedLikedArtworks);
+  }, []);
+
+  const removeFromSubscriptions = (artworkId) => {
+    const updatedLikedArtworks = likedArtworks.filter(
+      (artwork) => artwork.id !== artworkId
+    );
+    localStorage.setItem("likedArtworks", JSON.stringify(updatedLikedArtworks));
+    setLikedArtworks(updatedLikedArtworks);
+  };
+
+  return (
+    <div className="container mx-auto p-6">
+      <h1 className="text-2xl font-bold mb-6 flex items-center">
+        <Heart className="mr-2 h-6 w-6 text-red-500" /> Liked Artworks
+      </h1>
+
+      {likedArtworks.length === 0 ? (
+        <div className="text-center text-gray-500">
+          No liked artworks yet. Explore the gallery and like some artworks!
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {likedArtworks.map((artwork) => (
+            <Card
+              key={artwork.id}
+              className="hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
+              <div className="relative">
+                <img
+                  src={artwork.imageUrl}
+                  alt={artwork.title}
+                  className="w-full h-48 object-cover rounded-t-lg"
+                />
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="absolute top-2 right-2"
+                  onClick={() => removeFromSubscriptions(artwork.id)}>
+                  <Trash2 className="h-6 w-6 text-red-500" />
+                </Button>
+              </div>
+              <CardHeader>
+                <CardTitle>{artwork.title}</CardTitle>
+                <CardDescription>{artwork.artist}</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-gray-600 mb-2">
+                  {artwork.description.length > 100
+                    ? `${artwork.description.substring(0, 100)}...`
+                    : artwork.description}
+                </p>
+              </CardContent>
+              <CardFooter className="flex justify-between items-center">
+                <div className="flex items-center text-green-600">
+                  <DollarSign className="h-4 w-4 mr-1" />
+                  <span className="font-bold">{artwork.price.toFixed(2)}</span>
+                </div>
+              </CardFooter>
+            </Card>
+          ))}
+        </div>
+      )}
     </div>
   );
 };
